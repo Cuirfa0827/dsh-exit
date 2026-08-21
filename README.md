@@ -22,7 +22,7 @@
 ```bash
 dsh plugin --profile web add dsh-exit
 # 或从 GitHub 安装：
-# dsh plugin --profile web add git+https://github.com/<你的用户名>/dsh-exit.git
+# dsh plugin --profile web add git+https://github.com/Cuirfa0827/dsh-exit.git
 # 重启 dsh web 生效
 ```
 
@@ -83,15 +83,6 @@ App 行为：
 ## 🧩 相关
 
 本插件是 [dsh-shutdown](https://www.npmjs.com/package/dsh-shutdown)（MIT，作者 replicant）的 fork：保留其优雅退出端点设计，把入口从 Settings 面板移到侧边栏页脚，并新增窗口关闭自动退出、回环安全护栏与 macOS 原生 App。
-
-## 📦 发布到 npm（维护者）
-
-```bash
-npm login                 # 首次：先到 https://www.npmjs.com/signup 注册账号
-npm publish               # 发布 / 更新（改版本号后重新 publish）
-```
-
-发布后安装命令简化为：`dsh plugin --profile web add dsh-exit`。
 
 ## 📄 许可
 

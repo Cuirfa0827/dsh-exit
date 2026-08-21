@@ -22,7 +22,7 @@ Closing a browser window does **not** stop the dsh background service — it kee
 ```bash
 dsh plugin --profile web add dsh-exit
 # or from GitHub:
-# dsh plugin --profile web add git+https://github.com/<your-username>/dsh-exit.git
+# dsh plugin --profile web add git+https://github.com/Cuirfa0827/dsh-exit.git
 # restart dsh web to activate
 ```
 
@@ -83,15 +83,6 @@ App behavior:
 ## 🧩 Related
 
 A fork of [dsh-shutdown](https://www.npmjs.com/package/dsh-shutdown) (MIT, by replicant): keeps its graceful-exit endpoint design, moves the entry point from the Settings panel to the sidebar footer, and adds exit-on-window-close, loopback security checks, and a native macOS app.
-
-## 📦 Publishing to npm (maintainer)
-
-```bash
-npm login                 # first time: sign up at https://www.npmjs.com/signup
-npm publish               # publish / update (bump the version, then republish)
-```
-
-Once published, install with: `dsh plugin --profile web add dsh-exit`.
 
 ## 📄 License
 
