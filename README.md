@@ -60,19 +60,22 @@ dsh plugin --profile web add dsh-sidebar-exit
 
 由于 `dsh web` 目前只支持监听回环地址，这两道检查覆盖了实际可达的攻击面。若未来支持 `--host 0.0.0.0`，请勿在非回环监听下使用本插件。
 
-## 🚀 桌面启动器（macOS）：点击即恢复服务
+## 🖥️ macOS 原生 App（推荐，替代浏览器「安装为应用」）
 
-浏览器「安装为应用」的窗口只是指向 URL 的壳，**无法启动本地进程**——用「退出」关掉服务后，直接点应用图标会连不上。仓库里提供了 macOS 启动器，双击即可「启动服务 + 打开应用窗口」：
+浏览器「安装为应用」的窗口只是指向 URL 的壳，**无法启动本地进程**——服务关掉后点图标只会连不上。本插件附带一个 macOS 原生 App（`macapp/`，Swift + WKWebView，零外部依赖，不侵入 dsh 本体）：
 
 ```bash
-# scripts/start-dsh.command —— 双击运行，或：
-chmod +x scripts/start-dsh.command
-./scripts/start-dsh.command
+cd macapp && ./build.sh          # 生成 DSH.app（需 macOS + swiftc）
+cp -R DSH.app /Applications/     # 安装
 ```
 
-- 服务未运行 → 后台启动 `dsh web`（日志 `~/.dsh/web.log`）并等待就绪；
-- 已运行 → 直接打开；
-- 默认打开名为 `DeepSeek Harness` 的 Chrome 应用（环境变量 `DSH_WEB_APP_NAME` 可改），找不到则回退到默认浏览器。
+App 行为：
+
+- 启动时检测 `127.0.0.1:3080` 的 dsh 服务；未运行则自动后台拉起 `dsh web` 并等待就绪，然后用自己的窗口加载 Web UI——**点图标 = 服务自动启动 + 界面直接可用**；
+- 与插件联动：App 窗口里同样有「退出」按钮；关闭 App 窗口（即最后一个窗口）后，服务约 10~15 秒自动退出；
+- 环境变量 `DSH_WEB_PORT` 可改端口。
+
+**备选：命令行启动器** `scripts/start-dsh.command`（双击运行，效果同上，但窗口仍是浏览器）。
 
 **常驻替代方案**：`scripts/dsh-web.plist` 是 launchd LaunchAgent 模板（`KeepAlive` 常驻、退出即自动重启）。⚠️ 启用后「退出」按钮语义会变成「重启」，与关机的初衷冲突，仅在确实需要服务永续在线时使用。
 

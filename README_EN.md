@@ -60,19 +60,22 @@ When enabled, every open page heartbeats the host; once the last window/tab clos
 
 Since `dsh web` only listens on loopback today, these checks cover the reachable attack surface. If `--host 0.0.0.0` ever becomes supported, do not use this plugin on a non-loopback listener.
 
-## 🚀 Desktop launcher (macOS): one click to bring the service back
+## 🖥️ Native macOS app (recommended — replaces the browser "install as app")
 
-A browser "install as app" window is just a shell pointing at the URL — it **cannot start a local process**. After shutting the service down with Exit, clicking the app icon alone will fail to connect. The repo ships a macOS launcher: double-click to "start the service + open the app window".
+A browser "install as app" window is just a shell pointing at the URL — it **cannot start a local process**, so after Exit the app icon alone fails to connect. This plugin ships a native macOS app (`macapp/`, Swift + WKWebView, zero external dependencies, no changes to dsh itself):
 
 ```bash
-# scripts/start-dsh.command — double-click it, or:
-chmod +x scripts/start-dsh.command
-./scripts/start-dsh.command
+cd macapp && ./build.sh          # builds DSH.app (needs macOS + swiftc)
+cp -R DSH.app /Applications/     # install
 ```
 
-- Service down → starts `dsh web` in the background (log at `~/.dsh/web.log`) and waits until ready;
-- Already running → just opens the window;
-- Opens the Chrome app named `DeepSeek Harness` by default (override with `DSH_WEB_APP_NAME`), falling back to the default browser.
+App behavior:
+
+- On launch, checks whether the dsh service (127.0.0.1:3080) is up; if not, starts `dsh web` in the background and waits until ready, then loads the Web UI in its own window — **click the icon = service auto-starts + UI is ready**;
+- Integrates with the plugin: the same Exit button works inside the app; closing the app window (i.e., the last window) exits the service ~10–15s later;
+- Port override via the `DSH_WEB_PORT` environment variable.
+
+**Alternative: CLI launcher** `scripts/start-dsh.command` (double-click; same effect, but the window is still the browser).
 
 **Always-on alternative**: `scripts/dsh-web.plist` is a launchd LaunchAgent template (`KeepAlive` restarts the service on exit). ⚠️ With it enabled, the Exit button becomes "restart" rather than "stop" — only use it if you truly need the service online forever.
 

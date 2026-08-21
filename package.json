@@ -22,6 +22,8 @@
   },
   "files": [
     "lib",
+    "macapp",
+    "scripts",
     "cordis.patch.yml",
     "README.md",
     "README_EN.md",
