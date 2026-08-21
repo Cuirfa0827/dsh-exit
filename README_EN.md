@@ -10,7 +10,7 @@ Closing a browser window does **not** stop the dsh background service — it kee
 
 ## ✨ Features
 
-- **🖱️ Sidebar "Exit" button**: at the sidebar foot, directly above the Settings button (official footer-action seat `sidebar.footer.action`, same spot as the Cordis panel button); icon + label when expanded, round icon button in the 56px rail
+- **🖱️ Sidebar "Exit" button**: at the sidebar foot, directly below the Settings button (official footer-action seat `sidebar.footer.action` with an order adjustment); icon + label when expanded, round icon button in the 56px rail
 - **🛡️ Double confirmation**: a confirm dialog before shutdown prevents accidental clicks
 - **✅ Success feedback**: requests shutdown immediately; closes the window when possible (installed-app windows), otherwise shows "已关闭"
 - **🪟 Optional exit-on-window-close**: with `exitOnWindowClose: true`, the service exits ~10–15s after the last window/tab is closed; refreshing a page does NOT trigger it (the new page re-registers its heartbeat)
