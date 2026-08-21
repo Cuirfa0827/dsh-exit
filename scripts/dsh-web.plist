@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  dsh-sidebar-exit — launchd LaunchAgent 模板（macOS 常驻方案）
+
+  作用：让 dsh web 服务常驻后台、崩溃/退出后自动重启，已安装的
+  Chrome 应用窗口随时可打开即用。
+
+  ⚠️ 注意：KeepAlive 会在服务退出后立刻把它重新拉起——
+  因此启用本服务后，「退出」按钮的语义会从「停机」变成「重启」。
+  这与「退出后释放端口/内存」的初衷冲突；若你只需要偶尔关闭服务，
+  请优先使用 scripts/start-dsh.command 启动器方案。
+
+  安装：
+    1. 把本文件复制为 ~/Library/LaunchAgents/com.dsh.web.plist
+    2. 按需修改 ProgramArguments 中的路径/端口（zsh 需能解析到 dsh）
+    3. launchctl load ~/Library/LaunchAgents/com.dsh.web.plist
+    卸载：launchctl unload ~/Library/LaunchAgents/com.dsh.web.plist
+-->
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.dsh.web</string>
+
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/zsh</string>
+    <string>-lc</string>
+    <string>exec dsh web --no-open</string>
+  </array>
+
+  <key>RunAtLoad</key>
+  <true/>
+
+  <key>KeepAlive</key>
+  <true/>
+
+  <key>StandardOutPath</key>
+  <string>/Users/cuirfa/.dsh/web.log</string>
+
+  <key>StandardErrorPath</key>
+  <string>/Users/cuirfa/.dsh/web.log</string>
+</dict>
+</plist>

@@ -60,6 +60,22 @@ dsh plugin --profile web add dsh-sidebar-exit
 
 由于 `dsh web` 目前只支持监听回环地址，这两道检查覆盖了实际可达的攻击面。若未来支持 `--host 0.0.0.0`，请勿在非回环监听下使用本插件。
 
+## 🚀 桌面启动器（macOS）：点击即恢复服务
+
+浏览器「安装为应用」的窗口只是指向 URL 的壳，**无法启动本地进程**——用「退出」关掉服务后，直接点应用图标会连不上。仓库里提供了 macOS 启动器，双击即可「启动服务 + 打开应用窗口」：
+
+```bash
+# scripts/start-dsh.command —— 双击运行，或：
+chmod +x scripts/start-dsh.command
+./scripts/start-dsh.command
+```
+
+- 服务未运行 → 后台启动 `dsh web`（日志 `~/.dsh/web.log`）并等待就绪；
+- 已运行 → 直接打开；
+- 默认打开名为 `DeepSeek Harness` 的 Chrome 应用（环境变量 `DSH_WEB_APP_NAME` 可改），找不到则回退到默认浏览器。
+
+**常驻替代方案**：`scripts/dsh-web.plist` 是 launchd LaunchAgent 模板（`KeepAlive` 常驻、退出即自动重启）。⚠️ 启用后「退出」按钮语义会变成「重启」，与关机的初衷冲突，仅在确实需要服务永续在线时使用。
+
 ## 🧩 相关
 
 本插件是 [dsh-shutdown](https://www.npmjs.com/package/dsh-shutdown)（MIT，作者 replicant）的 fork：保留其优雅退出端点设计，把入口从 Settings 面板移到侧边栏页脚，并新增窗口关闭自动退出与回环安全护栏。

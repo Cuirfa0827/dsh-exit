@@ -60,6 +60,22 @@ When enabled, every open page heartbeats the host; once the last window/tab clos
 
 Since `dsh web` only listens on loopback today, these checks cover the reachable attack surface. If `--host 0.0.0.0` ever becomes supported, do not use this plugin on a non-loopback listener.
 
+## 🚀 Desktop launcher (macOS): one click to bring the service back
+
+A browser "install as app" window is just a shell pointing at the URL — it **cannot start a local process**. After shutting the service down with Exit, clicking the app icon alone will fail to connect. The repo ships a macOS launcher: double-click to "start the service + open the app window".
+
+```bash
+# scripts/start-dsh.command — double-click it, or:
+chmod +x scripts/start-dsh.command
+./scripts/start-dsh.command
+```
+
+- Service down → starts `dsh web` in the background (log at `~/.dsh/web.log`) and waits until ready;
+- Already running → just opens the window;
+- Opens the Chrome app named `DeepSeek Harness` by default (override with `DSH_WEB_APP_NAME`), falling back to the default browser.
+
+**Always-on alternative**: `scripts/dsh-web.plist` is a launchd LaunchAgent template (`KeepAlive` restarts the service on exit). ⚠️ With it enabled, the Exit button becomes "restart" rather than "stop" — only use it if you truly need the service online forever.
+
 ## 🧩 Related
 
 A fork of [dsh-shutdown](https://www.npmjs.com/package/dsh-shutdown) (MIT, by replicant): keeps its graceful-exit endpoint design, moves the entry point from the Settings panel to the sidebar footer, and adds exit-on-window-close plus loopback security checks.
