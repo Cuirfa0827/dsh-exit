@@ -1,5 +1,5 @@
 #!/bin/bash
-# dsh-sidebar-exit — 构建 macOS 原生 App（WKWebView 外壳）
+# dsh-exit — 构建 macOS 原生 App（WKWebView 外壳）
 #
 # 依赖：macOS + Xcode 命令行工具（swiftc）。
 # 产物：macapp/DSH.app —— 复制到 /Applications 即可使用：

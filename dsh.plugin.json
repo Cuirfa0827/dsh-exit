@@ -1,8 +1,8 @@
 {
-  "id": "dsh-external/dsh-sidebar-exit",
-  "version": "0.1.0",
+  "id": "dsh-external/dsh-exit",
+  "version": "0.2.0",
   "main": "./lib/index.js",
-  "description": "侧边栏「退出」按钮：一键优雅关闭 DSH 服务进程；可选关闭最后一个窗口时自动退出",
+  "description": "侧边栏「退出」按钮 + 关闭最后一个窗口自动退出 + macOS 原生 App（一键启动服务）",
   "engines": {
     "dsh": ">=0.0.1"
   },

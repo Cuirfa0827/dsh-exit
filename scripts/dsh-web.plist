@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <!--
-  dsh-sidebar-exit — launchd LaunchAgent 模板（macOS 常驻方案）
+  dsh-exit — launchd LaunchAgent 模板（macOS 常驻方案）
 
   作用：让 dsh web 服务常驻后台、崩溃/退出后自动重启，已安装的
   Chrome 应用窗口随时可打开即用。

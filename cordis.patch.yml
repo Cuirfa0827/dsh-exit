@@ -1,4 +1,4 @@
-# dsh-sidebar-exit bundle patch: mounts the plugin into a profile layer stack.
+# dsh-exit bundle patch: mounts the plugin into a profile layer stack.
 #
 # 行配置（config）可用 profile 的 cordis.patch.yml 覆盖，例如启用
 # “关闭最后一个窗口自动退出服务”：
@@ -9,7 +9,7 @@
 #
 - insert:
     - id: sidebar-exit
-      name: 'dsh-sidebar-exit'
+      name: 'dsh-exit'
       config:
         # 关闭最后一个浏览器窗口/标签页后自动退出 DSH 服务进程。
         # 开启时，每个打开的页面都会向宿主发送心跳；最后一个页面关闭

@@ -1,12 +1,12 @@
-# dsh-sidebar-exit
+# dsh-exit
 
-侧边栏「退出」按钮 · 一键优雅关闭 DSH 服务进程 · 可选关闭窗口自动退出
+侧边栏「退出」按钮 · 关闭最后一个窗口自动退出 · macOS 原生 App 一键启动服务
 
 [English](./README_EN.md) | 中文
 
 ## ✨ 为什么需要
 
-关闭浏览器窗口**不会**结束 dsh 的后台服务进程——服务继续占用端口与内存。本插件在侧边栏底部（Settings 行的正下方，与官方 Cordis 面板按钮同一位置）放一个「退出」按钮，点一下即可关闭服务，无需打开设置面板、无需命令行。
+关闭浏览器窗口**不会**结束 dsh 的后台服务进程——服务继续占用端口与内存。本插件在侧边栏底部（Settings 行的正下方，与官方 Cordis 面板按钮同一位置）放一个「退出」按钮，点一下即可关闭服务，无需打开设置面板、无需命令行；再配合附带的 macOS 原生 App，点图标即可自动启动服务并打开界面。
 
 ## ✨ 功能一览
 
@@ -14,14 +14,15 @@
 - **🛡️ 二次确认**：点击后弹窗确认，防误触
 - **✅ 成功反馈**：确认后立即请求关机；若窗口可关闭（安装为应用的窗口）会自动关闭，否则按钮显示「已关闭」
 - **🪟 关闭窗口自动退出（可选）**：`exitOnWindowClose: true` 时，所有窗口/标签页都关闭后约 10~15 秒服务自动退出；刷新页面不会误触发（新页面会重新注册心跳）
+- **🖥️ macOS 原生 App（附带）**：Swift + WKWebView，点图标 = 自动启动服务 + 独立窗口承载 Web UI；关窗即退出服务（见下方章节）
 - **🔒 回环安全护栏**：关机端点只接受来自 127.0.0.1 / localhost 的请求，浏览器里任意网页无法跨站把本地服务关掉
 
 ## 📦 安装
 
 ```bash
-dsh plugin --profile web add dsh-sidebar-exit
+dsh plugin --profile web add dsh-exit
 # 或从 GitHub 安装：
-# dsh plugin --profile web add git+https://github.com/<你的用户名>/dsh-sidebar-exit.git
+# dsh plugin --profile web add git+https://github.com/<你的用户名>/dsh-exit.git
 # 重启 dsh web 生效
 ```
 
@@ -81,7 +82,16 @@ App 行为：
 
 ## 🧩 相关
 
-本插件是 [dsh-shutdown](https://www.npmjs.com/package/dsh-shutdown)（MIT，作者 replicant）的 fork：保留其优雅退出端点设计，把入口从 Settings 面板移到侧边栏页脚，并新增窗口关闭自动退出与回环安全护栏。
+本插件是 [dsh-shutdown](https://www.npmjs.com/package/dsh-shutdown)（MIT，作者 replicant）的 fork：保留其优雅退出端点设计，把入口从 Settings 面板移到侧边栏页脚，并新增窗口关闭自动退出、回环安全护栏与 macOS 原生 App。
+
+## 📦 发布到 npm（维护者）
+
+```bash
+npm login                 # 首次：先到 https://www.npmjs.com/signup 注册账号
+npm publish               # 发布 / 更新（改版本号后重新 publish）
+```
+
+发布后安装命令简化为：`dsh plugin --profile web add dsh-exit`。
 
 ## 📄 许可
 

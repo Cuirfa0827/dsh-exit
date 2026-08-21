@@ -1,5 +1,5 @@
 #!/bin/bash
-# dsh-sidebar-exit — macOS 启动器
+# dsh-exit — macOS 启动器
 #
 # 双击此文件（或在终端执行）：
 #   1. 如果 dsh web 服务未运行，先在后台启动它（日志写到 ~/.dsh/web.log）；

@@ -1,12 +1,12 @@
-# dsh-sidebar-exit
+# dsh-exit
 
-Sidebar "Exit" button · one-click graceful shutdown of the DSH service · optional exit-on-window-close
+Sidebar "Exit" button · exit when the last window closes · native macOS app that auto-starts the service
 
 English | [中文](./README.md)
 
 ## ✨ Why
 
-Closing a browser window does **not** stop the dsh background service — it keeps occupying the port and memory. This plugin puts an "Exit" button at the bottom of the sidebar (right below the Settings row, in the same footer-action seat as the official Cordis panel button) so you can shut the service down in one click — no Settings panel, no terminal.
+Closing a browser window does **not** stop the dsh background service — it keeps occupying the port and memory. This plugin puts an "Exit" button at the bottom of the sidebar (right below the Settings row, in the same footer-action seat as the official Cordis panel button) so you can shut the service down in one click — no Settings panel, no terminal. A bundled native macOS app then lets you start the service and open the UI with one click of its icon.
 
 ## ✨ Features
 
@@ -14,14 +14,15 @@ Closing a browser window does **not** stop the dsh background service — it kee
 - **🛡️ Double confirmation**: a confirm dialog before shutdown prevents accidental clicks
 - **✅ Success feedback**: requests shutdown immediately; closes the window when possible (installed-app windows), otherwise shows "已关闭"
 - **🪟 Optional exit-on-window-close**: with `exitOnWindowClose: true`, the service exits ~10–15s after the last window/tab is closed; refreshing a page does NOT trigger it (the new page re-registers its heartbeat)
+- **🖥️ Bundled native macOS app**: Swift + WKWebView; click the icon = auto-start the service + host the Web UI in its own window; closing the window stops the service (see section below)
 - **🔒 Loopback security fence**: the shutdown endpoint only accepts requests from 127.0.0.1 / localhost, so arbitrary web pages cannot cross-site shut down your local service
 
 ## 📦 Install
 
 ```bash
-dsh plugin --profile web add dsh-sidebar-exit
+dsh plugin --profile web add dsh-exit
 # or from GitHub:
-# dsh plugin --profile web add git+https://github.com/<your-username>/dsh-sidebar-exit.git
+# dsh plugin --profile web add git+https://github.com/<your-username>/dsh-exit.git
 # restart dsh web to activate
 ```
 
@@ -81,7 +82,16 @@ App behavior:
 
 ## 🧩 Related
 
-A fork of [dsh-shutdown](https://www.npmjs.com/package/dsh-shutdown) (MIT, by replicant): keeps its graceful-exit endpoint design, moves the entry point from the Settings panel to the sidebar footer, and adds exit-on-window-close plus loopback security checks.
+A fork of [dsh-shutdown](https://www.npmjs.com/package/dsh-shutdown) (MIT, by replicant): keeps its graceful-exit endpoint design, moves the entry point from the Settings panel to the sidebar footer, and adds exit-on-window-close, loopback security checks, and a native macOS app.
+
+## 📦 Publishing to npm (maintainer)
+
+```bash
+npm login                 # first time: sign up at https://www.npmjs.com/signup
+npm publish               # publish / update (bump the version, then republish)
+```
+
+Once published, install with: `dsh plugin --profile web add dsh-exit`.
 
 ## 📄 License
 

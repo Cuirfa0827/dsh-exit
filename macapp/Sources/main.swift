@@ -1,7 +1,7 @@
 import Cocoa
 import WebKit
 
-// dsh-sidebar-exit — macOS 原生应用（WKWebView 外壳）
+// dsh-exit — macOS 原生应用（WKWebView 外壳）
 //
 // 行为：
 //   1. 启动时检查 dsh web 服务（默认 127.0.0.1:3080）；未运行则后台拉起
