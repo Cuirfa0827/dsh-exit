@@ -59,6 +59,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, 
         window.center()
         window.contentView = webView
         window.makeKeyAndOrderFront(nil)
+        window.makeFirstResponder(webView) // 让 WebView 持有键盘焦点（复制粘贴必需）
         NSApp.activate(ignoringOtherApps: true)
 
         // 先显示占位页，再在后台把服务拉起来——窗口立即出现，绝不白屏卡顿。
@@ -200,8 +201,45 @@ final class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, 
     }
 }
 
+/// 构建标准主菜单（App / 编辑 / 窗口）。
+/// WKWebView 应用没有菜单栏时，Cmd+C / Cmd+V / Cmd+A 等快捷键没有菜单项在
+/// 响应链里路由，复制粘贴会失效——编辑菜单项的目标为第一响应者（WebView）。
+func buildMainMenu() {
+    let mainMenu = NSMenu()
+
+    let appItem = NSMenuItem()
+    mainMenu.addItem(appItem)
+    let appMenu = NSMenu()
+    appMenu.addItem(withTitle: "关于 DSH", action: #selector(NSApplication.orderFrontStandardAboutPanel(_:)), keyEquivalent: "")
+    appMenu.addItem(.separator())
+    appMenu.addItem(withTitle: "退出 DSH", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
+    appItem.submenu = appMenu
+
+    let editItem = NSMenuItem()
+    mainMenu.addItem(editItem)
+    let editMenu = NSMenu(title: "编辑")
+    editMenu.addItem(withTitle: "撤销", action: Selector(("undo:")), keyEquivalent: "z")
+    editMenu.addItem(withTitle: "重做", action: Selector(("redo:")), keyEquivalent: "Z")
+    editMenu.addItem(.separator())
+    editMenu.addItem(withTitle: "剪切", action: Selector(("cut:")), keyEquivalent: "x")
+    editMenu.addItem(withTitle: "拷贝", action: Selector(("copy:")), keyEquivalent: "c")
+    editMenu.addItem(withTitle: "粘贴", action: Selector(("paste:")), keyEquivalent: "v")
+    editMenu.addItem(withTitle: "全选", action: Selector(("selectAll:")), keyEquivalent: "a")
+    editItem.submenu = editMenu
+
+    let windowItem = NSMenuItem()
+    mainMenu.addItem(windowItem)
+    let windowMenu = NSMenu(title: "窗口")
+    windowMenu.addItem(withTitle: "最小化", action: #selector(NSWindow.performMiniaturize(_:)), keyEquivalent: "m")
+    windowMenu.addItem(withTitle: "关闭窗口", action: #selector(NSWindow.performClose(_:)), keyEquivalent: "w")
+    windowItem.submenu = windowMenu
+
+    app.mainMenu = mainMenu
+}
+
 let app = NSApplication.shared
 let delegate = AppDelegate()
 app.delegate = delegate
 app.setActivationPolicy(.regular)
+buildMainMenu()
 app.run()
