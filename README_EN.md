@@ -13,7 +13,7 @@ Closing a browser window does **not** stop the dsh background service — it kee
 - **🖱️ Sidebar "Exit" button**: at the sidebar foot, directly below the Settings button (official footer-action seat `sidebar.footer.action` with an order adjustment); icon + label when expanded, round icon button in the 56px rail
 - **🛡️ Double confirmation**: a confirm dialog before shutdown prevents accidental clicks
 - **✅ Success feedback**: requests shutdown immediately; closes the window when possible (installed-app windows), otherwise shows "已关闭"
-- **🪟 Optional exit-on-window-close**: with `exitOnWindowClose: true`, the service exits ~10–15s after the last window/tab is closed; refreshing a page does NOT trigger it (the new page re-registers its heartbeat)
+- **🪟 Optional exit-on-window-close**: with `exitOnWindowClose: true`, the service exits ~3–4s after the last window/tab is closed; refreshing a page does NOT trigger it (the refresh sends a bye beacon, and the new page re-registers within the grace window, cancelling the exit)
 - **🖥️ Bundled native macOS app**: Swift + WKWebView; click the icon = auto-start the service + host the Web UI in its own window; closing the window stops the service (see section below)
 - **🔒 Loopback security fence**: the shutdown endpoint only accepts requests from 127.0.0.1 / localhost, so arbitrary web pages cannot cross-site shut down your local service
 
@@ -39,7 +39,7 @@ Off by default (so closing one tab never kills the service accidentally). Overri
     exitOnWindowClose: true
 ```
 
-When enabled, every open page heartbeats the host; once the last window/tab closes (no heartbeat for ~12s), the service exits gracefully. With multiple windows open, closing one of them does not exit — only the last one does.
+When enabled, a closing page signals the host via pagehide + sendBeacon ("bye"); the host waits a 3s grace window (a refreshed page re-registers with "hello" during it, cancelling the exit) and exits once no pages remain. Heartbeats are only a crash fallback with a 90s TTL, so browser background-tab timer throttling can no longer cause false exits. With multiple windows open, closing one of them does not exit — only the last one does.
 
 > ⚠️ Side effect: while a page stays open, the service keeps running — auto-exit only fires when the last window closes.
 
@@ -48,8 +48,8 @@ When enabled, every open page heartbeats the host; once the last window/tab clos
 - Shutdown endpoint: `/_dsh/exit` (POST only, JSON body)
   - `{ "action": "shutdown" }` — explicit shutdown: responds "shutting down" first, then `process.exit(0)` after 500ms
   - `{ "action": "hello", "token" }` — page heartbeat registration
-  - `{ "action": "bye", "token" }` — page deregistration (reserved)
-- Window-close detection = heartbeat + TTL sweep, not a `pagehide` beacon: refreshing a page re-registers the heartbeat immediately, so it never falsely exits
+  - `{ "action": "bye", "token" }` — page-close beacon (pagehide + sendBeacon; fires on refresh/close)
+- Window-close detection = a "bye" beacon (pagehide + sendBeacon) plus a 3s grace window: a refreshed page re-registers ("hello") inside the window and cancels the exit; the heartbeat (30s interval, 90s TTL) only cleans up crashed/frozen pages, so background-tab timer throttling cannot kill the service
 - Session logs are written per event; exiting while idle is safe. Wait for an in-flight turn to finish before closing.
 
 ## 🔒 Security notes
@@ -73,7 +73,7 @@ cp -R DSH.app /Applications/     # install
 App behavior:
 
 - On launch, checks whether the dsh service (127.0.0.1:3080) is up; if not, starts `dsh web` in the background and waits until ready, then loads the Web UI in its own window — **click the icon = service auto-starts + UI is ready**;
-- Integrates with the plugin: the same Exit button works inside the app; closing the app window (i.e., the last window) exits the service ~10–15s later;
+- Integrates with the plugin: the same Exit button works inside the app; closing the app window (i.e., the last window) exits the service ~3–4s later;
 - Port override via the `DSH_WEB_PORT` environment variable.
 
 **Alternative: CLI launcher** `scripts/start-dsh.command` (double-click; same effect, but the window is still the browser).
