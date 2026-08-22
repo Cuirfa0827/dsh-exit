@@ -92,18 +92,62 @@ final class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, 
     }
 
     /// 后台启动 dsh web（nohup，日志 ~/.dsh/web.log）。
+    ///
+    /// 注意：macOS 从 Finder / 应用图标启动的进程 PATH 是精简的
+    /// （/usr/bin:/bin...），拿不到用户 shell 里的 fnm / nvm / Homebrew
+    /// 路径，`dsh`、`npx` 都找不到。因此这里显式探测常见 Node 安装目录并
+    /// 注入 PATH，再通过 `npx --yes @deepseek-ai/dsh` 启动（与用户手动的
+    /// 启动方式一致）。可用环境变量 DSH_CMD 完全覆盖启动命令。
     func startService(_ port: Int) {
-        let cmd = ProcessInfo.processInfo.environment["DSH_CMD"]
-            ?? "command -v dsh >/dev/null 2>&1 && dsh || npx --yes @deepseek-ai/dsh"
+        let env = ProcessInfo.processInfo.environment
+        let command: String
+        if let custom = env["DSH_CMD"], !custom.isEmpty {
+            command = custom
+        } else {
+            command = "npx --yes @deepseek-ai/dsh"
+        }
         let proc = Process()
         proc.executableURL = URL(fileURLWithPath: "/bin/zsh")
         proc.arguments = ["-lc",
-            "mkdir -p $HOME/.dsh && nohup \(cmd) web --no-open --port \(port) >> $HOME/.dsh/web.log 2>&1 &"]
+            "export PATH=\(Self.resolvedPATH()); mkdir -p $HOME/.dsh; " +
+            "nohup \(command) web --no-open --port \(port) >> $HOME/.dsh/web.log 2>&1 &"]
         do {
             try proc.run()
         } catch {
             NSLog("dsh-exit: failed to start dsh web: \(error)")
         }
+    }
+
+    /// 探测常见的 Node/npx 安装目录并拼出 PATH（fnm、nvm、Homebrew、系统目录）。
+    static func resolvedPATH() -> String {
+        let fm = FileManager.default
+        let home = NSHomeDirectory()
+        var dirs: [String] = []
+
+        func appendNodeBin(_ root: String) {
+            guard let versions = try? fm.contentsOfDirectory(atPath: root) else { return }
+            let bins = versions
+                .compactMap { v -> String? in
+                    let bin = root + "/" + v + "/installation/bin"
+                    return fm.fileExists(atPath: bin + "/npx") ? bin : nil
+                }
+                .sorted()
+            dirs.append(contentsOf: bins)
+        }
+        func appendNvmBin(_ root: String) {
+            guard let versions = try? fm.contentsOfDirectory(atPath: root) else { return }
+            let bins = versions
+                .compactMap { v -> String? in
+                    let bin = root + "/" + v + "/bin"
+                    return fm.fileExists(atPath: bin + "/npx") ? bin : nil
+                }
+                .sorted()
+            dirs.append(contentsOf: bins)
+        }
+        appendNodeBin(home + "/.local/share/fnm/node-versions")
+        appendNvmBin(home + "/.nvm/versions/node")
+        dirs += ["/opt/homebrew/bin", "/usr/local/bin", "/usr/bin", "/bin", "/usr/sbin", "/sbin"]
+        return dirs.joined(separator: ":")
     }
 
     /// 插件客户端在关机成功后调用 window.webkit.messageHandlers.dshExit。
