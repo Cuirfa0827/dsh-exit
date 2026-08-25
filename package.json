@@ -1,6 +1,6 @@
 {
   "name": "dsh-exit",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "DeepSeek Harness 退出插件：侧边栏「退出」按钮一键优雅关闭服务，关闭最后一个窗口自动退出（pagehide + sendBeacon，后台标签页不再误杀）。",
   "keywords": [
     "deepseek",

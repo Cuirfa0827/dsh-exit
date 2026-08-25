@@ -1,6 +1,6 @@
 {
   "id": "dsh-external/dsh-exit",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "main": "./lib/index.js",
   "description": "侧边栏「退出」按钮 + 关闭最后一个窗口自动退出（pagehide + sendBeacon）",
   "engines": {
