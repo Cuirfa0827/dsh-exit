@@ -2,4 +2,3 @@ node_modules/
 *.tgz
 *.log
 .DS_Store
-macapp/DSH.app/

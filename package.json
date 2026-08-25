@@ -1,7 +1,7 @@
 {
   "name": "dsh-exit",
-  "version": "0.2.5",
-  "description": "DeepSeek Harness 退出/启动插件：侧边栏「退出」按钮一键优雅关闭服务，关闭最后一个窗口自动退出（心跳+TTL），附 macOS 原生 App（点击即自动启动服务并承载 Web UI）。",
+  "version": "0.3.0",
+  "description": "DeepSeek Harness 退出插件：侧边栏「退出」按钮一键优雅关闭服务，关闭最后一个窗口自动退出（pagehide + sendBeacon，后台标签页不再误杀）。",
   "keywords": [
     "deepseek",
     "deepseek-harness",
@@ -10,11 +10,7 @@
     "plugin",
     "exit",
     "shutdown",
-    "sidebar",
-    "macos",
-    "app",
-    "launcher",
-    "webview"
+    "sidebar"
   ],
   "type": "module",
   "main": "lib/index.js",
@@ -26,8 +22,6 @@
   },
   "files": [
     "lib",
-    "macapp",
-    "scripts",
     "cordis.patch.yml",
     "README.md",
     "README_EN.md",

@@ -1,12 +1,12 @@
 # dsh-exit
 
-Sidebar "Exit" button · exit when the last window closes · native macOS app that auto-starts the service
+Sidebar "Exit" button · exit when the last window closes
 
 English | [中文](./README.md)
 
 ## ✨ Why
 
-Closing a browser window does **not** stop the dsh background service — it keeps occupying the port and memory. This plugin puts an "Exit" button at the bottom of the sidebar (right below the Settings row, in the same footer-action seat as the official Cordis panel button) so you can shut the service down in one click — no Settings panel, no terminal. A bundled native macOS app then lets you start the service and open the UI with one click of its icon.
+Closing a browser window does **not** stop the dsh background service — it keeps occupying the port and memory. This plugin puts an "Exit" button at the bottom of the sidebar (right below the Settings row, in the same footer-action seat as the official Cordis panel button) so you can shut the service down in one click — no Settings panel, no terminal.
 
 ## ✨ Features
 
@@ -14,7 +14,6 @@ Closing a browser window does **not** stop the dsh background service — it kee
 - **🛡️ Double confirmation**: a confirm dialog before shutdown prevents accidental clicks
 - **✅ Success feedback**: requests shutdown immediately; closes the window when possible (installed-app windows), otherwise shows "已关闭"
 - **🪟 Optional exit-on-window-close**: with `exitOnWindowClose: true`, the service exits ~3–4s after the last window/tab is closed; refreshing a page does NOT trigger it (the refresh sends a bye beacon, and the new page re-registers within the grace window, cancelling the exit)
-- **🖥️ Bundled native macOS app**: Swift + WKWebView; click the icon = auto-start the service + host the Web UI in its own window; closing the window stops the service (see section below)
 - **🔒 Loopback security fence**: the shutdown endpoint only accepts requests from 127.0.0.1 / localhost, so arbitrary web pages cannot cross-site shut down your local service
 
 ## 📦 Install
@@ -61,28 +60,13 @@ When enabled, a closing page signals the host via pagehide + sendBeacon ("bye");
 
 Since `dsh web` only listens on loopback today, these checks cover the reachable attack surface. If `--host 0.0.0.0` ever becomes supported, do not use this plugin on a non-loopback listener.
 
-## 🖥️ Native macOS app (recommended — replaces the browser "install as app")
+## 📝 Changelog
 
-A browser "install as app" window is just a shell pointing at the URL — it **cannot start a local process**, so after Exit the app icon alone fails to connect. This plugin ships a native macOS app (`macapp/`, Swift + WKWebView, zero external dependencies, no changes to dsh itself):
-
-```bash
-cd macapp && ./build.sh          # builds DSH.app (needs macOS + swiftc)
-cp -R DSH.app /Applications/     # install
-```
-
-App behavior:
-
-- On launch, checks whether the dsh service (127.0.0.1:3080) is up; if not, starts `dsh web` in the background and waits until ready, then loads the Web UI in its own window — **click the icon = service auto-starts + UI is ready**;
-- Integrates with the plugin: the same Exit button works inside the app; closing the app window (i.e., the last window) exits the service ~3–4s later;
-- Port override via the `DSH_WEB_PORT` environment variable.
-
-**Alternative: CLI launcher** `scripts/start-dsh.command` (double-click; same effect, but the window is still the browser).
-
-**Always-on alternative**: `scripts/dsh-web.plist` is a launchd LaunchAgent template (`KeepAlive` restarts the service on exit). ⚠️ With it enabled, the Exit button becomes "restart" rather than "stop" — only use it if you truly need the service online forever.
+> ℹ️ **As of 0.3.0, the bundled macOS app build capability (`macapp/`) and the CLI/launchd launchers (`scripts/`) have been removed.** This plugin now focuses solely on the "exit" responsibility; to restart the service after exit, just run `dsh web`.
 
 ## 🧩 Related
 
-A fork of [dsh-shutdown](https://www.npmjs.com/package/dsh-shutdown) (MIT, by replicant): keeps its graceful-exit endpoint design, moves the entry point from the Settings panel to the sidebar footer, and adds exit-on-window-close, loopback security checks, and a native macOS app.
+A fork of [dsh-shutdown](https://www.npmjs.com/package/dsh-shutdown) (MIT, by replicant): keeps its graceful-exit endpoint design, moves the entry point from the Settings panel to the sidebar footer, and adds exit-on-window-close and loopback security checks.
 
 ## 📄 License
 
