@@ -86,7 +86,7 @@ routes.length = 0;
 await apply(makeCtx({ exitOnWindowClose: true }), { exitOnWindowClose: true });
 await post(H(), 'hello', 'a');
 await post(H(), 'bye', 'a');       // 最后一个页面关闭
-await sleep(4000);                 // 宽限 3s + 退出延迟 0.5s
+await sleep(6000);                 // 宽限 5s + 退出延迟 0.5s + 余量
 check('真正关闭后退出', exited);
 
 // ---------- 场景 4：启动后无页面不自杀 ----------
@@ -94,7 +94,7 @@ console.log('\n[4] 启动后从未有页面：不退出（hasSeenPage 护栏）'
 exited = false;
 routes.length = 0;
 await apply(makeCtx({ exitOnWindowClose: true }), { exitOnWindowClose: true });
-await sleep(3500);
+await sleep(5500);
 check('无页面时未退出', !exited);
 
 // ---------- 场景 5：多窗口 ----------
@@ -105,10 +105,10 @@ await apply(makeCtx({ exitOnWindowClose: true }), { exitOnWindowClose: true });
 await post(H(), 'hello', 'w1');
 await post(H(), 'hello', 'w2');
 await post(H(), 'bye', 'w1');
-await sleep(4000);
+await sleep(6000);
 check('关掉一个窗口未退出', !exited);
 await post(H(), 'bye', 'w2');
-await sleep(4000);
+await sleep(6000);
 check('关掉最后一个窗口退出', exited);
 
 process.exit = origExit;
